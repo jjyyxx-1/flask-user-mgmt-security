@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if user %}
+    <p class="welcome-text">🎉 欢迎回来，{{ user['username'] | e }}！</p>
+
+    <div class="card">
+        <h2 class="card-title">用户信息</h2>
+        <ul class="info-list">
+            <li>
+                <span class="info-label">用户名</span>
+                <span class="info-value">{{ user['username'] | e }}</span>
+            </li>
+            <li>
+                <span class="info-label">邮箱</span>
+                <span class="info-value">{{ user['email'] | e }}</span>
+            </li>
+            <li>
+                <span class="info-label">手机</span>
+                <span class="info-value">{{ user['phone'] | e }}</span>
+            </li>
+            <li>
+                <span class="info-label">角色</span>
+                <span class="info-value">{{ user['role'] | e }}</span>
+            </li>
+            <li>
+                <span class="info-label">余额</span>
+                <span class="info-value">{{ user['balance'] }}</span>
+            </li>
+        </ul>
+
+        {% if avatar_filename %}
+        <div style="text-align:center; margin-top: 16px;">
+            <img src="{{ url_for('static', filename='uploads/' + avatar_filename) }}" alt="头像" style="max-width:120px; max-height:120px; border-radius:50%; box-shadow:0 2px 8px rgba(0,0,0,0.15);">
+        </div>
+        {% endif %}
+
+        <div class="btn-group">
+            <a href="/upload" class="btn btn-primary" style="width:auto; padding:10px 20px;">上传头像</a>
+            <a href="/logout" class="btn btn-danger">退出登录</a>
+        </div>
+    </div>
+
+    <!-- 搜索功能 -->
+    <div class="card" style="margin-top: 20px;">
+        <h2 class="card-title">搜索用户</h2>
+        <form method="get" action="/">
+            <div class="form-group" style="display:flex; gap:8px;">
+                <input type="text" name="keyword" class="form-input" placeholder="输入用户名或邮箱搜索..." value="{{ keyword | e }}" style="flex:1;">
+                <button type="submit" class="btn btn-primary" style="width:auto; padding:10px 20px;">搜索</button>
+            </div>
+        </form>
+
+        {% if keyword %}
+            <div style="margin-top: 16px;">
+                {% if search_results %}
+                    <p style="margin-bottom: 10px; color: #666; font-size: 14px;">找到 {{ search_results | length }} 条结果</p>
+                    <table class="search-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>用户名</th>
+                                <th>邮箱</th>
+                                <th>手机</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for r in search_results %}
+                            <tr>
+                                <td>{{ r['id'] }}</td>
+                                <td>{{ r['username'] | e }}</td>
+                                <td>{{ r['email'] | e }}</td>
+                                <td>{{ r['phone'] | e }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p class="guest-text" style="margin:0;">无搜索结果</p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+{% else %}
+    <div class="card text-center">
+        <p class="guest-text">🔒 请先登录</p>
+        <a href="/login" class="btn btn-primary" style="display:inline-block;width:auto;padding:10px 48px;">前往登录</a>
+    </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,126 @@
+2026-07-07 04:36:56,770 [INFO] Flask 启动: debug=False, host=0.0.0.0:5000
+2026-07-07 23:59:50,342 [INFO] 数据库初始化完成: /workspace/user-management/data/users.db
+2026-07-07 23:59:50,343 [INFO] Flask 启动: debug=False, host=0.0.0.0:5000
+2026-07-07 23:59:50,356 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.142.129:5000
+2026-07-07 23:59:50,356 [INFO] [33mPress CTRL+C to quit[0m
+2026-07-08 00:00:09,395 [INFO] 注册SQL: INSERT INTO users (username, password, email, phone) VALUES ('testuser', 'test123', 'test@test.com', '13900139002')
+2026-07-08 00:00:09,397 [INFO] 注册成功: username=testuser
+2026-07-08 00:00:09,402 [INFO] 127.0.0.1 - - [08/Jul/2026 00:00:09] "POST /register HTTP/1.1" 200 -
+2026-07-08 00:00:09,412 [INFO] 搜索SQL: SELECT id, username, email, phone FROM users WHERE username LIKE '%admin%' OR email LIKE '%admin%'
+2026-07-08 00:00:09,417 [INFO] 127.0.0.1 - - [08/Jul/2026 00:00:09] "GET /?keyword=admin HTTP/1.1" 200 -
+2026-07-08 00:00:09,428 [INFO] 搜索SQL: SELECT id, username, email, phone FROM users WHERE username LIKE '%test%' OR email LIKE '%test%'
+2026-07-08 00:00:09,428 [INFO] 127.0.0.1 - - [08/Jul/2026 00:00:09] "GET /?keyword=test HTTP/1.1" 200 -
+2026-07-08 00:00:09,437 [INFO] 搜索SQL: SELECT id, username, email, phone FROM users WHERE username LIKE '%nonexist%' OR email LIKE '%nonexist%'
+2026-07-08 00:00:09,437 [INFO] 127.0.0.1 - - [08/Jul/2026 00:00:09] "GET /?keyword=nonexist HTTP/1.1" 200 -
+2026-07-08 00:00:15,707 [INFO] 搜索SQL: SELECT id, username, email, phone FROM users WHERE username LIKE '%admin%' OR email LIKE '%admin%'
+2026-07-08 00:00:15,709 [INFO] 127.0.0.1 - - [08/Jul/2026 00:00:15] "GET /?keyword=admin HTTP/1.1" 200 -
+2026-07-08 00:00:15,718 [INFO] 搜索SQL: SELECT id, username, email, phone FROM users WHERE username LIKE '%test%' OR email LIKE '%test%'
+2026-07-08 00:00:15,718 [INFO] 127.0.0.1 - - [08/Jul/2026 00:00:15] "GET /?keyword=test HTTP/1.1" 200 -
+2026-07-08 00:00:20,671 [INFO] 搜索SQL: SELECT id, username, email, phone FROM users WHERE username LIKE '%admin%' OR email LIKE '%admin%'
+2026-07-08 00:00:20,672 [INFO] 127.0.0.1 - - [08/Jul/2026 00:00:20] "GET /?keyword=admin HTTP/1.1" 200 -
+2026-07-08 00:00:27,838 [INFO] 127.0.0.1 - - [08/Jul/2026 00:00:27] "GET /login HTTP/1.1" 200 -
+2026-07-08 00:00:27,932 [INFO] 登录成功: username=admin, IP=127.0.0.1
+2026-07-08 00:00:27,933 [INFO] 127.0.0.1 - - [08/Jul/2026 00:00:27] "[32mPOST /login HTTP/1.1[0m" 302 -
+2026-07-08 00:00:27,941 [INFO] 搜索SQL: SELECT id, username, email, phone FROM users WHERE username LIKE '%admin%' OR email LIKE '%admin%'
+2026-07-08 00:00:27,942 [INFO] 127.0.0.1 - - [08/Jul/2026 00:00:27] "GET /?keyword=admin HTTP/1.1" 200 -
+2026-07-08 00:00:27,949 [INFO] 搜索SQL: SELECT id, username, email, phone FROM users WHERE username LIKE '%test%' OR email LIKE '%test%'
+2026-07-08 00:00:27,950 [INFO] 127.0.0.1 - - [08/Jul/2026 00:00:27] "GET /?keyword=test HTTP/1.1" 200 -
+2026-07-08 00:00:27,958 [INFO] 搜索SQL: SELECT id, username, email, phone FROM users WHERE username LIKE '%nonexist%' OR email LIKE '%nonexist%'
+2026-07-08 00:00:27,959 [INFO] 127.0.0.1 - - [08/Jul/2026 00:00:27] "GET /?keyword=nonexist HTTP/1.1" 200 -
+2026-07-08 02:42:11,077 [INFO] 数据库初始化完成: /workspace/user-management/data/users.db
+2026-07-08 02:42:11,077 [INFO] Flask 启动: debug=False, host=0.0.0.0:5000
+2026-07-08 02:42:11,086 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.142.129:5000
+2026-07-08 02:42:11,086 [INFO] [33mPress CTRL+C to quit[0m
+2026-07-08 02:42:19,910 [INFO] 192.168.142.1 - - [08/Jul/2026 02:42:19] "GET / HTTP/1.1" 200 -
+2026-07-08 02:42:19,958 [INFO] 192.168.142.1 - - [08/Jul/2026 02:42:19] "GET /static/css/style.css HTTP/1.1" 200 -
+2026-07-08 02:42:19,997 [INFO] 192.168.142.1 - - [08/Jul/2026 02:42:19] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-07-08 02:42:20,996 [INFO] 192.168.142.1 - - [08/Jul/2026 02:42:20] "GET /login HTTP/1.1" 200 -
+2026-07-08 02:42:21,026 [INFO] 192.168.142.1 - - [08/Jul/2026 02:42:21] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-07-08 02:42:29,494 [INFO] 登录失败（密码错误）: username=admin, IP=192.168.142.1
+2026-07-08 02:42:29,495 [INFO] 192.168.142.1 - - [08/Jul/2026 02:42:29] "POST /login HTTP/1.1" 200 -
+2026-07-08 02:42:29,525 [INFO] 192.168.142.1 - - [08/Jul/2026 02:42:29] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-07-08 02:42:56,003 [INFO] 登录成功: username=admin, IP=192.168.142.1
+2026-07-08 02:42:56,004 [INFO] 192.168.142.1 - - [08/Jul/2026 02:42:56] "[32mPOST /login HTTP/1.1[0m" 302 -
+2026-07-08 02:42:56,009 [INFO] 192.168.142.1 - - [08/Jul/2026 02:42:56] "GET / HTTP/1.1" 200 -
+2026-07-08 02:42:56,036 [INFO] 192.168.142.1 - - [08/Jul/2026 02:42:56] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-07-08 02:48:25,018 [INFO] 搜索SQL: SELECT id, username, email, phone FROM users WHERE username LIKE '%abcd%' OR email LIKE '%abcd%'
+2026-07-08 02:48:25,020 [INFO] 192.168.142.1 - - [08/Jul/2026 02:48:25] "GET /?keyword=abcd HTTP/1.1" 200 -
+2026-07-08 02:48:25,049 [INFO] 192.168.142.1 - - [08/Jul/2026 02:48:25] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-07-08 02:48:25,064 [INFO] 192.168.142.1 - - [08/Jul/2026 02:48:25] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-07-08 02:48:31,277 [INFO] 搜索SQL: SELECT id, username, email, phone FROM users WHERE username LIKE '%abcd%' OR email LIKE '%abcd%'
+2026-07-08 02:48:31,279 [INFO] 192.168.142.1 - - [08/Jul/2026 02:48:31] "GET /?keyword=abcd HTTP/1.1" 200 -
+2026-07-08 02:48:31,309 [INFO] 192.168.142.1 - - [08/Jul/2026 02:48:31] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-07-08 02:48:33,283 [INFO] 搜索SQL: SELECT id, username, email, phone FROM users WHERE username LIKE '%abcd%' OR email LIKE '%abcd%'
+2026-07-08 02:48:33,284 [INFO] 192.168.142.1 - - [08/Jul/2026 02:48:33] "GET /?keyword=abcd HTTP/1.1" 200 -
+2026-07-08 02:48:33,316 [INFO] 192.168.142.1 - - [08/Jul/2026 02:48:33] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-07-08 02:54:28,743 [INFO] 192.168.142.1 - - [08/Jul/2026 02:54:28] "GET / HTTP/1.1" 200 -
+2026-07-08 02:54:29,444 [INFO] 搜索SQL: SELECT id, username, email, phone FROM users WHERE username LIKE '%123%' OR email LIKE '%123%'
+2026-07-08 02:54:29,444 [INFO] 192.168.142.1 - - [08/Jul/2026 02:54:29] "GET /?keyword=123 HTTP/1.1" 200 -
+2026-07-08 02:54:29,813 [INFO] 搜索SQL: SELECT id, username, email, phone FROM users WHERE username LIKE '%教育学%' OR email LIKE '%教育学%'
+2026-07-08 02:54:29,814 [INFO] 192.168.142.1 - - [08/Jul/2026 02:54:29] "GET /?keyword=教育学 HTTP/1.1" 200 -
+2026-07-08 02:54:29,978 [INFO] 搜索SQL: SELECT id, username, email, phone FROM users WHERE username LIKE '%abcd%' OR email LIKE '%abcd%'
+2026-07-08 02:54:29,978 [INFO] 192.168.142.1 - - [08/Jul/2026 02:54:29] "GET /?keyword=abcd HTTP/1.1" 200 -
+2026-07-08 02:54:30,156 [INFO] 搜索SQL: SELECT id, username, email, phone FROM users WHERE username LIKE '%abcd%' OR email LIKE '%abcd%'
+2026-07-08 02:54:30,157 [INFO] 192.168.142.1 - - [08/Jul/2026 02:54:30] "GET /?keyword=abcd HTTP/1.1" 200 -
+2026-07-08 02:54:30,208 [INFO] 192.168.142.1 - - [08/Jul/2026 02:54:30] "GET /static/css/style.css HTTP/1.1" 200 -
+2026-07-08 02:54:30,243 [INFO] 192.168.142.1 - - [08/Jul/2026 02:54:30] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-07-08 02:54:43,130 [INFO] 搜索SQL: SELECT id, username, email, phone FROM users WHERE username LIKE '%abcd%' OR email LIKE '%abcd%'
+2026-07-08 02:54:43,130 [INFO] 192.168.142.1 - - [08/Jul/2026 02:54:43] "GET /?keyword=abcd HTTP/1.1" 200 -
+2026-07-08 02:54:43,188 [INFO] 192.168.142.1 - - [08/Jul/2026 02:54:43] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-07-08 02:55:12,250 [INFO] 搜索SQL: SELECT id, username, email, phone FROM users WHERE username LIKE '%1%' OR email LIKE '%1%'
+2026-07-08 02:55:12,251 [INFO] 搜索SQL: SELECT id, username, email, phone FROM users WHERE username LIKE '%1%' OR email LIKE '%1%'
+2026-07-08 02:55:12,252 [INFO] 192.168.142.1 - - [08/Jul/2026 02:55:12] "GET /?keyword=1 HTTP/1.1" 200 -
+2026-07-08 02:55:12,253 [INFO] 192.168.142.1 - - [08/Jul/2026 02:55:12] "GET /?keyword=1 HTTP/1.1" 200 -
+2026-07-08 02:55:12,306 [INFO] 192.168.142.1 - - [08/Jul/2026 02:55:12] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-07-08 02:56:11,526 [INFO] 192.168.142.1 - - [08/Jul/2026 02:56:11] "GET /?keyword= HTTP/1.1" 200 -
+2026-07-08 02:56:11,526 [INFO] 192.168.142.1 - - [08/Jul/2026 02:56:11] "GET /?keyword= HTTP/1.1" 200 -
+2026-07-08 02:56:11,527 [INFO] 登出: username=admin
+2026-07-08 02:56:11,527 [INFO] 192.168.142.1 - - [08/Jul/2026 02:56:11] "[32mGET /logout HTTP/1.1[0m" 302 -
+2026-07-08 02:56:11,529 [INFO] 192.168.142.1 - - [08/Jul/2026 02:56:11] "GET /?keyword= HTTP/1.1" 200 -
+2026-07-08 02:56:11,530 [INFO] 登出: username=admin
+2026-07-08 02:56:11,531 [INFO] 192.168.142.1 - - [08/Jul/2026 02:56:11] "[32mGET /logout HTTP/1.1[0m" 302 -
+2026-07-08 02:56:12,588 [INFO] 192.168.142.1 - - [08/Jul/2026 02:56:12] "GET / HTTP/1.1" 200 -
+2026-07-08 02:56:12,648 [INFO] 192.168.142.1 - - [08/Jul/2026 02:56:12] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-07-08 02:56:12,660 [INFO] 192.168.142.1 - - [08/Jul/2026 02:56:12] "GET /static/css/style.css HTTP/1.1" 200 -
+2026-07-08 02:56:19,975 [INFO] 192.168.142.1 - - [08/Jul/2026 02:56:19] "GET /login HTTP/1.1" 200 -
+2026-07-08 02:56:20,046 [INFO] 192.168.142.1 - - [08/Jul/2026 02:56:20] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-07-08 02:56:37,797 [INFO] 登录成功: username=admin, IP=192.168.142.1
+2026-07-08 02:56:37,797 [INFO] 192.168.142.1 - - [08/Jul/2026 02:56:37] "[32mPOST /login HTTP/1.1[0m" 302 -
+2026-07-08 02:56:42,312 [INFO] 192.168.142.1 - - [08/Jul/2026 02:56:42] "GET / HTTP/1.1" 200 -
+2026-07-08 02:56:42,386 [INFO] 登录成功: username=admin, IP=192.168.142.1
+2026-07-08 02:56:42,387 [INFO] 192.168.142.1 - - [08/Jul/2026 02:56:42] "[32mPOST /login HTTP/1.1[0m" 302 -
+2026-07-08 02:56:47,891 [INFO] 192.168.142.1 - - [08/Jul/2026 02:56:47] "GET / HTTP/1.1" 200 -
+2026-07-08 02:56:47,949 [INFO] 192.168.142.1 - - [08/Jul/2026 02:56:47] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-07-08 02:58:07,508 [INFO] 搜索SQL: SELECT id, username, email, phone FROM users WHERE username LIKE '%abcd%' OR email LIKE '%abcd%'
+2026-07-08 02:58:07,509 [INFO] 192.168.142.1 - - [08/Jul/2026 02:58:07] "GET /?keyword=abcd HTTP/1.1" 200 -
+2026-07-08 02:58:07,558 [INFO] 192.168.142.1 - - [08/Jul/2026 02:58:07] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-07-08 02:58:16,859 [INFO] 搜索SQL: SELECT id, username, email, phone FROM users WHERE username LIKE '%admin%' OR email LIKE '%admin%'
+2026-07-08 02:58:16,860 [INFO] 192.168.142.1 - - [08/Jul/2026 02:58:16] "GET /?keyword=admin HTTP/1.1" 200 -
+2026-07-08 02:58:16,920 [INFO] 192.168.142.1 - - [08/Jul/2026 02:58:16] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-07-08 03:37:40,453 [INFO] 搜索SQL: SELECT id, username, email, phone FROM users WHERE username LIKE '%1%' OR email LIKE '%1%'
+2026-07-08 03:37:40,490 [INFO] 192.168.142.1 - - [08/Jul/2026 03:37:40] "GET /?keyword=1 HTTP/1.1" 200 -
+2026-07-08 03:37:40,552 [INFO] 192.168.142.1 - - [08/Jul/2026 03:37:40] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-07-08 03:37:40,573 [INFO] 192.168.142.1 - - [08/Jul/2026 03:37:40] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-07-08 03:37:41,643 [INFO] 192.168.142.1 - - [08/Jul/2026 03:37:41] "GET /login HTTP/1.1" 200 -
+2026-07-08 03:37:41,669 [INFO] 192.168.142.1 - - [08/Jul/2026 03:37:41] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-07-08 03:37:47,119 [INFO] 登录成功: username=admin, IP=192.168.142.1
+2026-07-08 03:37:47,121 [INFO] 192.168.142.1 - - [08/Jul/2026 03:37:47] "[32mPOST /login HTTP/1.1[0m" 302 -
+2026-07-08 03:37:47,127 [INFO] 192.168.142.1 - - [08/Jul/2026 03:37:47] "GET / HTTP/1.1" 200 -
+2026-07-08 03:37:47,153 [INFO] 192.168.142.1 - - [08/Jul/2026 03:37:47] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-07-08 03:37:50,404 [INFO] 搜索SQL: SELECT id, username, email, phone FROM users WHERE username LIKE '%1%' OR email LIKE '%1%'
+2026-07-08 03:37:50,405 [INFO] 192.168.142.1 - - [08/Jul/2026 03:37:50] "GET /?keyword=1 HTTP/1.1" 200 -
+2026-07-08 03:37:50,432 [INFO] 192.168.142.1 - - [08/Jul/2026 03:37:50] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-07-08 03:37:54,153 [INFO] 搜索SQL: SELECT id, username, email, phone FROM users WHERE username LIKE '%admin%' OR email LIKE '%admin%'
+2026-07-08 03:37:54,154 [INFO] 192.168.142.1 - - [08/Jul/2026 03:37:54] "GET /?keyword=admin HTTP/1.1" 200 -
+2026-07-08 03:37:54,180 [INFO] 192.168.142.1 - - [08/Jul/2026 03:37:54] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-07-08 04:41:57,278 [INFO] 搜索SQL: SELECT id, username, email, phone FROM users WHERE username LIKE '%admin%' OR email LIKE '%admin%'
+2026-07-08 04:41:57,279 [INFO] 192.168.142.1 - - [08/Jul/2026 04:41:57] "GET /?keyword=admin HTTP/1.1" 200 -
+2026-07-08 04:41:57,307 [INFO] 192.168.142.1 - - [08/Jul/2026 04:41:57] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2026-07-08 04:41:58,171 [INFO] 192.168.142.1 - - [08/Jul/2026 04:41:58] "GET /login HTTP/1.1" 200 -
+2026-07-08 04:41:58,196 [INFO] 192.168.142.1 - - [08/Jul/2026 04:41:58] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -

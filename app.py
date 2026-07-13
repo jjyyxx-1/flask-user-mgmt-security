@@ -70,13 +70,14 @@ def init_db():
             username TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,
             email TEXT,
-            phone TEXT
+            phone TEXT,
+            balance REAL DEFAULT 0
         )
     """)
-    c.execute("INSERT OR IGNORE INTO users (username, password, email, phone) VALUES (?, ?, ?, ?)",
-              ("admin", "admin123", "admin@example.com", "13800138000"))
-    c.execute("INSERT OR IGNORE INTO users (username, password, email, phone) VALUES (?, ?, ?, ?)",
-              ("alice", "alice2025", "alice@example.com", "13900139001"))
+    c.execute("INSERT OR IGNORE INTO users (username, password, email, phone, balance) VALUES (?, ?, ?, ?, ?)",
+              ("admin", "admin123", "admin@example.com", "13800138000", 99999))
+    c.execute("INSERT OR IGNORE INTO users (username, password, email, phone, balance) VALUES (?, ?, ?, ?, ?)",
+              ("alice", "alice2025", "alice@example.com", "13900139001", 100))
     conn.commit()
     conn.close()
     logger.info("数据库初始化完成: %s", DB_PATH)
@@ -354,6 +355,62 @@ def dynamic_page():
             content = "页面不存在"
 
     return render_template("index.html", page_content=content)
+
+
+# ---------------------------------------------------------------------------
+# 路由 —— 个人中心（IDOR漏洞：可从URL参数查任意用户）
+# ---------------------------------------------------------------------------
+@app.route("/profile")
+@login_required
+def profile():
+    user_id = request.args.get("user_id", "")
+    if not user_id:
+        return render_template("profile.html", error="请提供用户ID")
+
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    try:
+        # 直接使用用户传入的 user_id 查询，不校验是否当前登录用户
+        c.execute("SELECT id, username, email, phone, balance FROM users WHERE id=?", (user_id,))
+        row = c.fetchone()
+        conn.close()
+        if row:
+            user_data = {
+                "id": row[0],
+                "username": row[1],
+                "email": row[2],
+                "phone": row[3],
+                "balance": row[4],
+            }
+            return render_template("profile.html", user=user_data)
+        else:
+            return render_template("profile.html", error="用户不存在")
+    except Exception as e:
+        conn.close()
+        return render_template("profile.html", error=f"查询失败: {e}")
+
+
+# ---------------------------------------------------------------------------
+# 路由 —— 充值（漏洞：不检查 amount 正负）
+# ---------------------------------------------------------------------------
+@app.route("/recharge", methods=["POST"])
+def recharge():
+    user_id = request.form.get("user_id", "")
+    amount = request.form.get("amount", "0")
+
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    try:
+        # 直接修改余额，不检查 amount 是否为负数
+        c.execute("UPDATE users SET balance = balance + ? WHERE id=?", (amount, user_id))
+        conn.commit()
+        conn.close()
+        logger.info("充值成功: user_id=%s, amount=%s", user_id, amount)
+        return redirect(f"/profile?user_id={user_id}")
+    except Exception as e:
+        conn.close()
+        logger.error("充值失败: %s", e)
+        return render_template("profile.html", error=f"充值失败: {e}")
 
 
 # ---------------------------------------------------------------------------

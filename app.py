@@ -320,6 +320,43 @@ def upload():
 
 
 # ---------------------------------------------------------------------------
+# 路由 —— 动态页面加载（含路径穿越漏洞）
+# ---------------------------------------------------------------------------
+PAGES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pages")
+
+
+@app.route("/page")
+def dynamic_page():
+    name = request.args.get("name", "")
+    if not name:
+        return render_template("index.html", page_content="请输入页面名称")
+
+    # 直接拼接用户输入到路径中（不做任何过滤，允许 ../ 穿越）
+    file_path = os.path.join(PAGES_DIR, name)
+    content = None
+
+    if os.path.exists(file_path):
+        try:
+            with open(file_path, "r", encoding="utf-8") as f:
+                content = f.read()
+        except Exception:
+            content = "读取文件失败"
+    else:
+        # 尝试加上 .html 后缀
+        file_path_html = file_path + ".html"
+        if os.path.exists(file_path_html):
+            try:
+                with open(file_path_html, "r", encoding="utf-8") as f:
+                    content = f.read()
+            except Exception:
+                content = "读取文件失败"
+        else:
+            content = "页面不存在"
+
+    return render_template("index.html", page_content=content)
+
+
+# ---------------------------------------------------------------------------
 # 路由 —— 登出
 # ---------------------------------------------------------------------------
 @app.route("/logout")

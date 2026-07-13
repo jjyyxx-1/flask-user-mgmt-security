@@ -1,7 +1,20 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% if user %}
+
+{% if page_content %}
+    <!-- 动态页面内容 -->
+    <div class="card">
+        <h2 class="card-title">帮助中心</h2>
+        <div class="page-content">
+            {{ page_content | safe }}
+        </div>
+        <div class="text-center" style="margin-top: 20px;">
+            <a href="/" style="color: #667eea; font-size: 14px;">← 返回首页</a>
+        </div>
+    </div>
+
+{% elif user %}
     <p class="welcome-text">🎉 欢迎回来，{{ user['username'] | e }}！</p>
 
     <div class="card">
@@ -88,4 +101,5 @@
         <a href="/login" class="btn btn-primary" style="display:inline-block;width:auto;padding:10px 48px;">前往登录</a>
     </div>
 {% endif %}
+
 {% endblock %}

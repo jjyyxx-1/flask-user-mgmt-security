@@ -243,3 +243,42 @@ body {
 .search-table tbody tr:hover {
     background: #f8f9fc;
 }
+
+/* ===== 动态页面内容 ===== */
+.page-content {
+    font-size: 15px;
+    line-height: 1.9;
+    color: #333;
+}
+
+.page-content h3 {
+    font-size: 20px;
+    color: #1a1a2e;
+    margin-bottom: 12px;
+}
+
+.page-content h4 {
+    font-size: 16px;
+    color: #0f3460;
+    margin-top: 20px;
+    margin-bottom: 8px;
+}
+
+.page-content p {
+    margin-bottom: 10px;
+}
+
+.page-content ul {
+    padding-left: 24px;
+    margin-bottom: 12px;
+}
+
+.page-content li {
+    margin-bottom: 6px;
+}
+
+.page-content hr {
+    border: none;
+    border-top: 1px solid #e0e0e0;
+    margin: 12px 0;
+}

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2 class="card-title">👤 个人中心</h2>
+
+    {% if error %}
+        <div class="alert alert-error">{{ error | e }}</div>
+        <div class="text-center" style="margin-top: 16px;">
+            <a href="/" style="color: #667eea; font-size: 14px;">← 返回首页</a>
+        </div>
+    {% elif user %}
+        <div class="info-list">
+            <li>
+                <span class="info-label">用户ID</span>
+                <span class="info-value">{{ user['id'] }}</span>
+            </li>
+            <li>
+                <span class="info-label">用户名</span>
+                <span class="info-value">{{ user['username'] | e }}</span>
+            </li>
+            <li>
+                <span class="info-label">邮箱</span>
+                <span class="info-value">{{ user['email'] | e }}</span>
+            </li>
+            <li>
+                <span class="info-label">手机</span>
+                <span class="info-value">{{ user['phone'] | e }}</span>
+            </li>
+            <li>
+                <span class="info-label">余额</span>
+                <span class="info-value" style="color: #28a745; font-size: 18px;">¥{{ user['balance'] }}</span>
+            </li>
+        </div>
+
+        <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;">
+
+        <h3 style="text-align: center; margin-bottom: 16px; color: #333;">充值</h3>
+        <form method="post" action="/recharge">
+            <input type="hidden" name="user_id" value="{{ user['id'] }}">
+            <div class="form-group">
+                <label for="amount">充值金额</label>
+                <input type="number" id="amount" name="amount" class="form-input" placeholder="请输入充值金额" step="0.01" required>
+            </div>
+            <button type="submit" class="btn btn-primary">充 值</button>
+        </form>
+
+        <div class="text-center" style="margin-top: 16px;">
+            <a href="/" style="color: #667eea; font-size: 14px;">← 返回首页</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

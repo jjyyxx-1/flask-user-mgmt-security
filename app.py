@@ -414,6 +414,29 @@ def recharge():
 
 
 # ---------------------------------------------------------------------------
+# 路由 —— 修改密码（CSRF绕过+无原密码校验+越权）
+# ---------------------------------------------------------------------------
+@app.route("/change-password", methods=["POST"])
+def change_password():
+    username = request.form.get("username", "")
+    new_password = request.form.get("new_password", "")
+
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    try:
+        # 直接更新密码，不验证原密码、不验证session、不需要CSRF Token
+        c.execute("UPDATE users SET password = ? WHERE username = ?", (new_password, username))
+        conn.commit()
+        conn.close()
+        logger.info("密码修改成功: username=%s", username)
+        return redirect(f"/")
+    except Exception as e:
+        conn.close()
+        logger.error("密码修改失败: %s", e)
+        return redirect("/")
+
+
+# ---------------------------------------------------------------------------
 # 路由 —— 登出
 # ---------------------------------------------------------------------------
 @app.route("/logout")

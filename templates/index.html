@@ -96,6 +96,24 @@
         {% endif %}
     </div>
 
+    <!-- URL抓取功能 -->
+    <div class="card" style="margin-top: 20px;">
+        <h2 class="card-title">🌐 URL 抓取</h2>
+        <form method="post" action="/fetch-url">
+            <div class="form-group" style="display:flex; gap:8px;">
+                <input type="text" name="url" class="form-input" placeholder="输入URL（支持 http/https/file）..." value="{{ fetch_url | e }}" style="flex:1;" required>
+                <button type="submit" class="btn btn-primary" style="width:auto; padding:10px 20px;">抓取</button>
+            </div>
+        </form>
+
+        {% if fetch_result %}
+            <div style="margin-top: 16px;">
+                <p style="margin-bottom: 8px; font-weight: 600; color: #333;">抓取结果：</p>
+                <pre style="background: #1e1e2e; color: #cdd6f4; padding: 16px; border-radius: 8px; font-size: 12px; line-height: 1.6; overflow-x: auto; max-height: 400px; white-space: pre-wrap;">{{ fetch_result }}</pre>
+            </div>
+        {% endif %}
+    </div>
+
 {% else %}
     <div class="card text-center">
         <p class="guest-text">🔒 请先登录</p>

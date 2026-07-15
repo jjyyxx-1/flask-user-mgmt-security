@@ -6,6 +6,8 @@ import secrets
 import time
 import logging
 import sqlite3
+import urllib.request
+import urllib.error
 from functools import wraps
 
 from flask import (
@@ -434,6 +436,28 @@ def change_password():
         conn.close()
         logger.error("密码修改失败: %s", e)
         return redirect("/")
+
+
+# ---------------------------------------------------------------------------
+# 路由 —— URL抓取（SSRF漏洞：无协议限制、无内网限制）
+# ---------------------------------------------------------------------------
+@app.route("/fetch-url", methods=["POST"])
+@login_required
+def fetch_url():
+    url = request.form.get("url", "")
+    if not url:
+        return render_template("index.html", fetch_result="请输入URL")
+
+    try:
+        logger.info("抓取URL: %s", url)
+        resp = urllib.request.urlopen(url, timeout=10)
+        status_code = resp.getcode()
+        content = resp.read(5000).decode("utf-8", errors="replace")
+        result = f"状态码: {status_code}\n\n{content}"
+        return render_template("index.html", fetch_result=result, fetch_url=url)
+    except Exception as e:
+        logger.error("抓取失败: url=%s, error=%s", url, e)
+        return render_template("index.html", fetch_result=f"抓取失败: {e}", fetch_url=url)
 
 
 # ---------------------------------------------------------------------------

